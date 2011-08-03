@@ -56,6 +56,7 @@ public class BigMcApp extends JFrame {
 		menuBar = new BigMcMenu(this);
 		appPanel = new JPanel(new BorderLayout()); 
 		codeEditor = new JEditorPane();
+		codeEditor.setFont(new Font("Monospaced",Font.PLAIN,13));
 		scrPane = new JScrollPane(codeEditor);
 		console = new JTextArea();
 		console.setEditable(false);
