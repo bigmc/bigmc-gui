@@ -200,14 +200,14 @@ public class BigMcApp extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		try {
+		/*try {
 			URL url = BigMcApp.class.getResource("/bigmc-small.png");
 			Toolkit kit = Toolkit.getDefaultToolkit();
 			Image img = kit.createImage(url);
 			Application.getApplication().setDockIconImage(img);
 		} catch (Exception e) {
 
-		}
+		}*/
 
 		if(args.length >= 1) {
 			System.out.println("Setting BIGMC_HOME to " + args[0]);
