@@ -97,6 +97,8 @@ Reserved =
   "else"                            { return token(TokenType.OPERATOR); }
 
 
+  "$" {DecIntegerLiteral}	 { return token(TokenType.TYPE); }
+  
   /* numeric literals */
 
   {DecIntegerLiteral}            { return token(TokenType.NUMBER); }
@@ -110,7 +112,6 @@ Reserved =
   /* identifiers */
   {Identifier}                   { return token(TokenType.IDENTIFIER); }
 
-  "$" {DecIntegerLiteral}	 { return token(TokenType.TYPE); }
 }
 
 /* error fallback */

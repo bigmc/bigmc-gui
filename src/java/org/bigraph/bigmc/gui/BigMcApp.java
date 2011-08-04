@@ -35,6 +35,7 @@ import java.net.URL;
 import java.io.*;
 
 import jsyntaxpane.DefaultSyntaxKit;
+import jsyntaxpane.SyntaxDocument;
 
 import com.apple.eawt.Application;
 
@@ -47,6 +48,7 @@ public class BigMcApp extends JFrame {
 	JScrollPane consoleScr;
 	JSplitPane splitPane;
 	public static String BIGMC_HOME;
+	boolean modified;
 
 	public BigMcApp() {
 		super("Untitled - BigMC");
@@ -81,7 +83,7 @@ public class BigMcApp extends JFrame {
         	DefaultSyntaxKit.initKit();
 
 		codeEditor.setContentType("text/bgm");
-		codeEditor.setText("# \n\n\n%check;");
+		codeEditor.setText("");
 
 		setJMenuBar(menuBar);
 
@@ -157,8 +159,8 @@ public class BigMcApp extends JFrame {
 			public void run() {
 
 				try {
-					
-					final Process process = Runtime.getRuntime().exec(cl);
+					String[] envp = {"BIGMC_HOME="+BIGMC_HOME};
+					final Process process = Runtime.getRuntime().exec(cl, envp);
 
 					System.out.println("Process call has returned");
 
@@ -187,6 +189,14 @@ public class BigMcApp extends JFrame {
 				}
 			}
 		}).start();
+	}
+
+	public void undo() {
+		((SyntaxDocument)codeEditor.getDocument()).doUndo();
+	}
+
+	public void redo() {
+		((SyntaxDocument)codeEditor.getDocument()).doRedo();
 	}
 
 	public static void main(String[] args) {

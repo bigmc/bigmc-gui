@@ -32,6 +32,8 @@ import java.awt.event.InputEvent;
 
 import java.io.File;
 
+import jsyntaxpane.SyntaxDocument;
+
 import java.net.URL;
 
 class McHandler {
@@ -91,7 +93,7 @@ public class McEvent {
 	static public class UndoEvent extends McHandler implements ActionListener {
 		public UndoEvent(BigMcApp f) { super(f); }
 		public void actionPerformed(ActionEvent e) {
-
+			frame.undo();
 		}
 	}
 
@@ -99,7 +101,7 @@ public class McEvent {
 		public RedoEvent(BigMcApp f) { super(f); }
 
 		public void actionPerformed(ActionEvent e) {
-
+			frame.redo();
 		}
 	}
 
