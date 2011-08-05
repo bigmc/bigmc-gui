@@ -31,6 +31,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.InputEvent;
 
 import java.io.File;
+import java.io.IOException;
 
 import jsyntaxpane.SyntaxDocument;
 
@@ -143,6 +144,8 @@ public class McEvent {
 		public RunEvent(BigMcApp f) { super(f); }
 
 		public void actionPerformed(ActionEvent e) {
+			frame.resetProgress();
+
 			RunOpts r = new RunOpts(frame);
 			r.show();
 
@@ -153,6 +156,19 @@ public class McEvent {
 					r.rLocal, 
 					r.rPrint, 
 					r.rVerbose);
+		}
+	}
+
+	static public class ManualEvent extends McHandler implements ActionListener {
+		public ManualEvent(BigMcApp f) { super(f); }
+
+		public void actionPerformed(ActionEvent e) {
+			String url = "http://bigraph.org/bigmc/manual";
+			try {
+				java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
+			} catch (IOException error) {
+				JOptionPane.showMessageDialog(frame, "Error launching browser: " + error.getMessage());
+			}
 		}
 	}
 

@@ -114,6 +114,15 @@ public class BigMcMenu extends JMenuBar {
 		i.addActionListener(new McEvent.RunEvent(window));
 		i.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,mod));
 
+		// HELP MENU
+
+		m = new JMenu("Help");
+		menuBar.add(m);
+		
+		i = new JMenuItem("BigMC Online Manual"); m.add(i);
+		i.addActionListener(new McEvent.ManualEvent(window));
+		i.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS,mod | InputEvent.SHIFT_DOWN_MASK));
+
 	}
 }
 

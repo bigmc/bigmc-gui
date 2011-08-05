@@ -49,6 +49,7 @@ public class BigMcApp extends JFrame {
 	JSplitPane splitPane;
 	public static String BIGMC_HOME;
 	boolean modified;
+	McToolbar toolBar;
 
 	public BigMcApp() {
 		super("Untitled - BigMC");
@@ -65,6 +66,8 @@ public class BigMcApp extends JFrame {
 		console.setFont(new Font("Monospaced",Font.PLAIN,11));
 		console.setText("Welcome to BigMC!\n");
 		console.setLineWrap(true);
+
+		toolBar = new McToolbar(this);
 		
 		consoleScr = new JScrollPane(console);
 
@@ -89,6 +92,8 @@ public class BigMcApp extends JFrame {
 
 		final Container c = getContentPane();
 		c.setLayout(new BorderLayout());
+
+		c.add(toolBar, BorderLayout.PAGE_START);
 
 		c.add(appPanel, BorderLayout.CENTER);
 
@@ -138,7 +143,9 @@ public class BigMcApp extends JFrame {
 		saveFile(tmp);
 		
 		String cmdLine = BIGMC_HOME + "/bin/bigmc";
-		
+	
+		toolBar.setMaxSteps(maxSteps);
+
 		cmdLine += " -m " + maxSteps;
 		cmdLine += " -r " + reportSteps;
 
@@ -173,11 +180,18 @@ public class BigMcApp extends JFrame {
 					while((c = br.readLine()) != null) {
 						console.append(c + "\n");
 						console.setCaretPosition(console.getDocument().getLength());
+						if(c.startsWith("[mc::report]")) {
+							String prog[] = c.split(" @ ");
+							int pr = Integer.parseInt(prog[1]);
+							toolBar.setProgress(pr);
+						}
 					}
 			
 					System.out.println("Waitfor");
 
 					process.waitFor();
+
+					toolBar.setComplete("Checker process terminated");
 
 					System.out.println("Process terminated: " + process.exitValue());
 
@@ -197,6 +211,10 @@ public class BigMcApp extends JFrame {
 
 	public void redo() {
 		((SyntaxDocument)codeEditor.getDocument()).doRedo();
+	}
+
+	public void resetProgress() {
+		toolBar.resetProgress();
 	}
 
 	public static void main(String[] args) {
