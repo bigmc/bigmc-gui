@@ -108,7 +108,9 @@ public class BigMcApp extends JFrame {
 
 		c.doLayout();
 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		addWindowListener(new McEvent.CloseEvent(this));
+		
 		pack();
 	
 		runOpts = new RunOpts(this);
