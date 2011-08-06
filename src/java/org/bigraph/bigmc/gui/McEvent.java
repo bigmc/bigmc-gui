@@ -23,6 +23,8 @@
 package org.bigraph.bigmc.gui;
 
 import javax.swing.*;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.DocumentEvent;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -51,7 +53,11 @@ public class McEvent {
 		public NewEvent(BigMcApp f) { super(f); }
 
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("New!");
+			if(frame.getDirty()) {
+				if(!frame.confirmDiscard()) return;
+			}
+
+			frame.newDocument();
 		}
 	}
 
@@ -59,6 +65,12 @@ public class McEvent {
 		public OpenEvent(BigMcApp f) { super(f); }
 
 		public void actionPerformed(ActionEvent e) {
+			if(frame.getDirty()) {
+				if(!frame.confirmDiscard()) return;
+			}
+
+			frame.newDocument();
+
 			FileDialog f = new FileDialog(frame,"Open Model File");
 
 			f.show();
@@ -73,6 +85,12 @@ public class McEvent {
 		public SaveEvent(BigMcApp f) { super(f); }
 
 		public void actionPerformed(ActionEvent e) {
+			if(frame.getFileName() == null) {
+				(new SaveAsEvent(frame)).actionPerformed(e);
+				return;
+			}
+
+			frame.saveFile(frame.getFileName());
 		}
 	}
 
@@ -85,6 +103,18 @@ public class McEvent {
 			f.show();
 
 			if(f.getFile() == null) return;
+
+			if((new File(f.getFile())).exists()) {
+				int n = JOptionPane.showConfirmDialog(frame,
+    				"That file already exists.  Would you like to overwrite it?",
+				"File Exists",
+    				JOptionPane.YES_NO_OPTION);
+
+				if(n == JOptionPane.NO_OPTION) {
+					actionPerformed(e);
+					return;
+				}
+			}
 
 			System.out.println("File selected: " + f.getDirectory() + f.getFile());
 			frame.saveFile(new File(f.getDirectory() + f.getFile()));
@@ -161,6 +191,22 @@ public class McEvent {
 			} catch (IOException error) {
 				JOptionPane.showMessageDialog(frame, "Error launching browser: " + error.getMessage());
 			}
+		}
+	}
+
+	static public class EditorEvent extends McHandler implements DocumentListener {
+		public EditorEvent(BigMcApp f) { super(f); }
+
+		public void changedUpdate(DocumentEvent ev) {
+			frame.setDirty(true);
+		}
+ 
+		public void insertUpdate(DocumentEvent ev) {
+			frame.setDirty(true);
+		}
+ 
+		public void removeUpdate(DocumentEvent ev) {
+			frame.setDirty(true);
 		}
 	}
 

@@ -51,9 +51,13 @@ public class BigMcApp extends JFrame {
 	boolean modified;
 	McToolbar toolBar;
 	RunOpts runOpts;
+	boolean isDirty;
+	File fileName;
 
 	public BigMcApp() {
 		super("Untitled - BigMC");
+
+		fileName = null;
 
 		setPreferredSize(new Dimension(800, 600));
 
@@ -89,6 +93,10 @@ public class BigMcApp extends JFrame {
 		codeEditor.setContentType("text/bgm");
 		codeEditor.setText("");
 
+		codeEditor.getDocument().addDocumentListener(new McEvent.EditorEvent(this));
+
+		isDirty = false;
+
 		setJMenuBar(menuBar);
 
 		final Container c = getContentPane();
@@ -116,6 +124,10 @@ public class BigMcApp extends JFrame {
 
 		try {
 			codeEditor.read(new FileReader(fp), fp.getAbsolutePath());
+			codeEditor.getDocument().addDocumentListener(new McEvent.EditorEvent(this));
+			fileName = fp;
+			setDirty(true);
+			setDirty(false);
 		} catch (java.io.IOException e) {
 			JOptionPane.showMessageDialog(this, "Error reading from file: " + fp);
 		}
@@ -127,9 +139,18 @@ public class BigMcApp extends JFrame {
 			String s = codeEditor.getText();
 			w.write(s);
 			w.close();
+			fileName = fp;
+			setDirty(false);
 		} catch(java.io.IOException e) {
 			JOptionPane.showMessageDialog(this, "Error writing to file: " + fp);
 		}
+	}
+
+	public void newDocument() {
+		codeEditor.setText("");
+		fileName = null;
+		setDirty(true);
+		setDirty(false);
 	}
 
 	public void runModel(int maxSteps, int reportSteps, boolean local, boolean printmode, boolean verbose) {
@@ -237,6 +258,50 @@ public class BigMcApp extends JFrame {
 
 	}
 
+	public void setDirty(boolean dirty) {
+		if(!isDirty && dirty) {
+			setTitle(((fileName != null) ? fileName.getName() : "Untitled") + "* - BigMC");
+		}
+
+		if(isDirty && !dirty) {
+			setTitle(((fileName != null) ? fileName.getName() : "Untitled") + " - BigMC");
+		}
+		
+		isDirty = dirty;
+	}
+
+	public boolean getDirty() {
+		return isDirty;
+	}
+
+	public boolean confirmDiscard() {
+		int n = JOptionPane.showConfirmDialog(this,
+    		"The current document has been modified.  Would you like to save it?",
+		"Confirm",
+    		JOptionPane.YES_NO_CANCEL_OPTION);
+	
+
+		if(n == JOptionPane.YES_OPTION) {
+			// Do save, then proceed
+
+			(new McEvent.SaveEvent(this)).actionPerformed(null);
+
+			return true;
+		}
+
+		if(n == JOptionPane.NO_OPTION) {
+			// Discard current text, then proceed
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public File getFileName() {
+		return fileName;
+	}
+
 	public static void main(String[] args) {
 		/*try {
 			URL url = BigMcApp.class.getResource("/bigmc-small.png");
@@ -256,7 +321,7 @@ public class BigMcApp extends JFrame {
 
 			String os = System.getProperty("os.name").toLowerCase();
 			if(os.indexOf( "win" ) >= 0) {
-				BIGMC_HOME=".";
+				BIGMC_HOME="C:\\Progra~1\\BigMC";
 			}
 		}
 
