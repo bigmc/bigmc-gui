@@ -146,17 +146,9 @@ public class McEvent {
 		public void actionPerformed(ActionEvent e) {
 			frame.resetProgress();
 
-			RunOpts r = new RunOpts(frame);
-			r.show();
-
-			if(!r.successful) return;
-
-			frame.runModel(r.rMaxSteps, 
-					r.rReportSteps, 
-					r.rLocal, 
-					r.rPrint, 
-					r.rVerbose);
+			if(!frame.showRunOpts()) return;
 		}
+
 	}
 
 	static public class ManualEvent extends McHandler implements ActionListener {

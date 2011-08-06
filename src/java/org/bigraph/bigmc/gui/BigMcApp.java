@@ -50,6 +50,7 @@ public class BigMcApp extends JFrame {
 	public static String BIGMC_HOME;
 	boolean modified;
 	McToolbar toolBar;
+	RunOpts runOpts;
 
 	public BigMcApp() {
 		super("Untitled - BigMC");
@@ -101,7 +102,9 @@ public class BigMcApp extends JFrame {
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack();
-		
+	
+		runOpts = new RunOpts(this);
+	
 		setLocationRelativeTo(null);
 	}
 
@@ -215,6 +218,23 @@ public class BigMcApp extends JFrame {
 
 	public void resetProgress() {
 		toolBar.resetProgress();
+	}
+
+	public boolean showRunOpts() {
+		runOpts.successful = false;
+
+		runOpts.show();
+
+		if(!runOpts.successful) return false;
+
+		runModel(runOpts.rMaxSteps, 
+			runOpts.rReportSteps, 
+			runOpts.rLocal, 
+			runOpts.rPrint, 
+			runOpts.rVerbose);
+
+		return true;
+
 	}
 
 	public static void main(String[] args) {

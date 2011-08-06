@@ -7,7 +7,8 @@
   <property name="build" location="build"/>
   <property name="dist"  location="dist"/>
 
-
+<taskdef name="jarbundler" 
+         classname="net.sourceforge.jarbundler.JarBundler" />
 
   <target name="init">
     <!-- Create the time stamp -->
@@ -54,6 +55,20 @@
           <jvmarg value="-Xdock:name=BigMC"/>
           <jvmarg value="-Dapple.laf.useScreenMenuBar=true"/>
        </java>
+  </target>
+
+  <target name="release" depends="dist">
+    <mkdir dir="release"/>
+    <jarbundler dir="release"
+              name="BigMC"
+              mainclass="org.bigraph.bigmc.gui.BigMcApp" 
+              jar="${dist}/BigMC-GUI-${DSTAMP}.jar" 
+              shortname="BigMC"
+              icon="bigmc.icns"
+              bundleid="org.bigraph.bigmc.gui"
+    >
+	<javaproperty name="apple.laf.useScreenMenuBar" value="true"/>
+    </jarbundler>
   </target>
 
   <target name="clean"
