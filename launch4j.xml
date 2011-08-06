@@ -1,0 +1,22 @@
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>/Users/gdpe/Documents/bigmc-gui/dist/BigMC-GUI-20110806.jar</jar>
+  <outfile>/Users/gdpe/Documents/bigmc-gui/platform/Win32/BigMC-GUI.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir></chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
+  <customProcName>false</customProcName>
+  <stayAlive>false</stayAlive>
+  <manifest></manifest>
+  <icon>/Users/gdpe/Documents/bigmc-gui/bigmc-tiny.ico</icon>
+  <jre>
+    <path></path>
+    <minVersion>1.6.0_26</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+  </jre>
+</launch4jConfig>

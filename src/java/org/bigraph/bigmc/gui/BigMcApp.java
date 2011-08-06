@@ -253,7 +253,14 @@ public class BigMcApp extends JFrame {
 		} else {
 			// Try the default
 			BIGMC_HOME = "/usr/local/bigmc";
+
+			String os = System.getProperty("os.name").toLowerCase();
+			if(os.indexOf( "win" ) >= 0) {
+				BIGMC_HOME=".";
+			}
 		}
+
+		
 
 		JFrame frame = new BigMcApp();
 

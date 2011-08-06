@@ -10,6 +10,10 @@
 <taskdef name="jarbundler" 
          classname="net.sourceforge.jarbundler.JarBundler" />
 
+<taskdef name="launch4j"
+    classname="net.sf.launch4j.ant.Launch4jTask"
+    classpath="/opt/launch4j/launch4j.jar:/opt/launch4j/lib/xstream.jar" />
+
   <target name="init">
     <!-- Create the time stamp -->
     <tstamp/>
@@ -69,6 +73,8 @@
     >
 	<javaproperty name="apple.laf.useScreenMenuBar" value="true"/>
     </jarbundler>
+
+    <launch4j configFile="launch4j.xml" jar="${dist}/BigMC-GUI-${DSTAMP}.jar" />
   </target>
 
   <target name="clean"
