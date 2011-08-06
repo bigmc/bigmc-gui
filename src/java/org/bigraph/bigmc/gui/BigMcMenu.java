@@ -74,6 +74,16 @@ public class BigMcMenu extends JMenuBar {
 		i = new JMenuItem("Print"); m.add(i);
 		i.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,mod));
 
+		String os = System.getProperty("os.name").toLowerCase();
+	    	if(!(os.indexOf( "mac" ) >= 0)) {
+			// If not on a mac, add an Exit option
+			m.addSeparator();
+			i = new JMenuItem("Exit"); m.add(i);
+			i.addActionListener(new McEvent.CloseEvent(window));
+			i.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,mod));
+		}
+		
+
 		// EDIT MENU
 
 		m = new JMenu("Edit");

@@ -212,7 +212,7 @@ public class McEvent {
 		}
 	}
 
-	static public class CloseEvent extends WindowAdapter {
+	static public class CloseEvent extends WindowAdapter implements ActionListener {
 		BigMcApp frame;
 
 		public CloseEvent(BigMcApp f) { super(); frame = f; }
@@ -224,5 +224,9 @@ public class McEvent {
 
         		System.exit(0);
       		}
+
+		public void actionPerformed(ActionEvent e) {
+			windowClosing(null);
+		}
 	}
 }
