@@ -329,9 +329,19 @@ public class BigMcApp extends JFrame {
 
 		
 
-		JFrame frame = new BigMcApp();
+		BigMcApp frame = new BigMcApp();
 
 		frame.setVisible(true);
+
+		JFrame f2 = new JFrame("BgDisplay");
+
+		f2.getContentPane().add(new BgDisplay(frame, "a.a.a.a.nil | b.b.b.b.nil | c.c.c.c.c.nil"));
+
+		f2.setPreferredSize(new Dimension(500,500));
+
+		f2.pack();
+	
+		f2.setVisible(true);
 	}
 }
 
