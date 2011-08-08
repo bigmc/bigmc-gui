@@ -23,6 +23,7 @@
 package org.bigraph.bigmc.gui;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -304,6 +305,23 @@ public class BigMcApp extends JFrame {
 		return fileName;
 	}
 
+	public void visualise(String opt) {
+		String n = codeEditor.getSelectedText();
+
+		if(n == null)
+			n = console.getSelectedText();
+
+		if(n == null) {
+			System.out.println("No selected text");
+		} else {
+			System.out.println("Selected text: " + n);
+		}
+
+		McVisualiser v = new McVisualiser(this,n);
+		v.setLocationRelativeTo(this);
+		v.setVisible(true);
+	}
+
 	public static void main(String[] args) {
 		/*try {
 			URL url = BigMcApp.class.getResource("/bigmc-small.png");
@@ -332,16 +350,6 @@ public class BigMcApp extends JFrame {
 		BigMcApp frame = new BigMcApp();
 
 		frame.setVisible(true);
-
-		JFrame f2 = new JFrame("BgDisplay");
-
-		f2.getContentPane().add(new BgDisplay(frame, "a[x,y,z].a[-,-,-].a.a.nil | b[x].b.b.b.nil | c.c.c.c[y].c.nil"));
-
-		f2.setPreferredSize(new Dimension(500,500));
-
-		f2.pack();
-	
-		f2.setVisible(true);
 	}
 }
 

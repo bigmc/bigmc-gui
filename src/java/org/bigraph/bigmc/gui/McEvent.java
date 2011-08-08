@@ -172,6 +172,15 @@ public class McEvent {
 	}
 
 
+	static public class VisualiseEvent extends McHandler implements ActionListener {
+		public VisualiseEvent(BigMcApp f) { super(f); }
+
+		public void actionPerformed(ActionEvent e) {
+			frame.visualise(null);
+		}
+
+	}
+
 	static public class RunEvent extends McHandler implements ActionListener {
 		public RunEvent(BigMcApp f) { super(f); }
 

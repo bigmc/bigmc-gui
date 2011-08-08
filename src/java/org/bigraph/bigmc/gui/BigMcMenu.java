@@ -116,10 +116,12 @@ public class BigMcMenu extends JMenuBar {
 
 		// RUN MENU
 
-		m = new JMenu("Run");
+		m = new JMenu("Model");
 		menuBar.add(m);
-		i = new JCheckBoxMenuItem("Local Checking Mode"); m.add(i);
-		
+		i = new JMenuItem("Bigraph Visualiser"); m.add(i);
+		i.addActionListener(new McEvent.VisualiseEvent(window));
+		i.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B,mod));
+
 		i = new JMenuItem("Run Check..."); m.add(i);
 		i.addActionListener(new McEvent.RunEvent(window));
 		i.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,mod));

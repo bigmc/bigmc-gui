@@ -45,6 +45,30 @@ import jsyntaxpane.SyntaxDocument;
 
 import com.apple.eawt.Application;
 
+class BgParseException extends Exception {
+	int pos;
+	String rem;
+	String mesg;
+
+	public BgParseException(int index, String s, String msg) {
+		mesg = msg;
+		pos = index;
+		rem = s.substring(pos);
+	}
+
+	public String getMessage() {
+		return mesg;
+	}
+
+	public String getRemaining() {
+		return rem;
+	}
+
+	public int getPosition() {
+		return pos;
+	}
+}
+
 abstract class BgShape {
 	public double x;
 	public double y;
@@ -142,11 +166,6 @@ class BgRegion extends BgShape {
 
 		if(w < 50) w = 50;
 		if(h < 50) h = 50;
-		System.out.println("BgRegion layout: " + w + " / " + h);
-
-		for(String s : BgShape.names.keySet()) {
-			System.out.println("Name: " + s);
-		}
 
 		// Once we've established the size of the region, we layout the names.
 
@@ -239,6 +258,9 @@ class BgNode extends BgShape {
 		double newW = PADDING;
 		double newH = 0.0;		
 
+		if(g == null) 
+			System.out.println("NULL GRAPHICS");
+
 		for(BgShape c : children) {
 			c.layout(g);
 
@@ -255,7 +277,6 @@ class BgNode extends BgShape {
 
 		if(w < adv + PADDING*2) w = adv+PADDING;
 		if(h < 50) h = w;
-		System.out.println("BgNode " + mControl + " layout: " + w + " / " + h);
 	}
 
 	public void linkPort(String p) {
@@ -273,7 +294,11 @@ class BgParser {
 	}
 
 	public char peek() {
-		if(index < s.length()) return s.charAt(index);
+		if(index < s.length()) {
+			if(s.charAt(index) == ';') return 0;
+
+			return s.charAt(index);
+		}
 
 		return 0;
 	}
@@ -288,10 +313,10 @@ class BgParser {
 		return s.startsWith(t,index);
 	}
 
-	public void consume(String t) {
+	public void consume(String t) throws BgParseException {
 		if(startsWith(t)) index += t.length();
 
-		else throw new RuntimeException("BgParser: Expected '" + t + "'");
+		else throw new BgParseException(index, s, "BgParser: Expected '" + t + "'");
 	}
 
 	public void ws() {
@@ -317,9 +342,9 @@ class BgParser {
 		return (c >= '0' && c <= '9');
 	}
 
-	public String getId() {
+	public String getId() throws BgParseException {
 		if(!isId())
-			throw new RuntimeException("Expected name!");
+			throw new BgParseException(index, s, "Expected name!");
 
 		String n = "";
 		n += Character.toString(peek());
@@ -330,12 +355,10 @@ class BgParser {
 			consume();
 		}
 
-		System.out.println("getId(): " + n);
-
 		return n;
 	}
 
-	public void links(BgNode b) {
+	public void links(BgNode b) throws BgParseException {
 		ws();
 
 		if(peek() == ']') return;
@@ -361,7 +384,7 @@ class BgParser {
 		return;
 	}
 
-	public LinkedList<BgShape> exp() {
+	public LinkedList<BgShape> exp() throws BgParseException {
 		LinkedList<BgShape> res;
 		ws();
 
@@ -377,7 +400,7 @@ class BgParser {
 
 		ws();
 
-		if(peek() == 0) return n;
+		if(peek() == 0 || peek() == ')') return n;
 
 		if(peek() == '|') {
 			consume();
@@ -386,19 +409,24 @@ class BgParser {
 			return n;
 		}
 
-		throw new RuntimeException("Unexpected expression at position " + index);
+		throw new BgParseException(index,s,"Unexpected expression at position " + index);
 	}
 
-	public LinkedList<BgShape> exp_el() {
+	public LinkedList<BgShape> exp_el() throws BgParseException {
 		LinkedList<BgShape> res;
 	
-		System.out.println("exp_el: " + s.substring(index));
-
 		ws();
 
 
 		res = new LinkedList<BgShape>();
 
+		if(peek() == '(') {
+			consume();
+			res = exp();
+			ws();
+			consume(")");
+			return res;
+		}
 		
 		if(isId()) {
 			if(startsWith("nil")) { 
@@ -427,38 +455,47 @@ class BgParser {
 				return res;
 			}
 
-
+			if(peek() == '|' || peek() == 0) return res;
 		}
 
-		if(peek() == 0) return res;
+		if(peek() == 0 || peek() == '|' || peek() == ')') return res;
 
-		throw new RuntimeException("Unknown expression at position " + index);
+		throw new BgParseException(index, s, "Unknown expression");
 	}
 
-	LinkedList<BgShape> parse() {
+	LinkedList<BgShape> parse() throws BgParseException {
 		return exp();
 	}
 }
 
 public class BgDisplay extends JPanel {
 	private LinkedList<BgShape> shapes;
-	private BigMcApp frame;
+	private JFrame frame;
 
-	public BgDisplay(BigMcApp app, String bgstring) {
+	public BgDisplay(JFrame app) {
 		super(true);
 
 		frame = app;
 
 		BgShape.names = new HashMap<String,Point2D.Double>();
 		shapes = new LinkedList<BgShape>();
+	}
+
+	void display(String bgstring) {
+		BgShape.names = new HashMap<String,Point2D.Double>();
+
+		shapes.clear();
 
 		BgParser bgp = new BgParser(bgstring);
 
-		LinkedList<BgShape> n = bgp.parse();
-
-		/*BgShape.names.put("a", new Point2D.Double(0,0));
-		BgShape.names.put("b", new Point2D.Double(0,0));
-		BgShape.names.put("c", new Point2D.Double(0,0));*/
+		LinkedList<BgShape> n;
+		
+		try {
+			n = bgp.parse();
+		} catch(BgParseException e) {
+			JOptionPane.showMessageDialog(frame, "Parse Error: " + e.getMessage());
+			n = new LinkedList<BgShape>();
+		}
 
 		BgRegion r = new BgRegion(0);
 
@@ -466,8 +503,20 @@ public class BgDisplay extends JPanel {
 			r.addChild(nn);
 
 		shapes.add(r);
+	
+		Graphics2D tmpg = (Graphics2D) getGraphics();
 
-		setPreferredSize(new Dimension(500,500));
+		if(tmpg == null)
+			tmpg = (Graphics2D) frame.getGraphics();
+
+		if(tmpg == null) return;
+
+		r.layout((Graphics2D) tmpg);
+		
+		setPreferredSize(new Dimension((int)r.w + 70, (int)r.h + 170));
+		revalidate();
+
+		repaint();
 	}
 
 	public void paintComponent(Graphics gr) {
@@ -479,9 +528,8 @@ public class BgDisplay extends JPanel {
 		for(BgShape s : shapes) {
 			s.layout(g);
 			s.draw(g, 25.0, 100.0);
-			System.out.println("Drawing g: " + s);
 		}
-	}	
+	}
 }
 
 
