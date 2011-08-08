@@ -336,7 +336,29 @@ class BgParser {
 	}
 
 	public void links(BgNode b) {
-		while(peek() != ']') consume();
+		ws();
+
+		if(peek() == ']') return;
+
+		if(peek() == '-') {
+			consume();
+			b.linkPort("");
+		}
+
+		if(isId()) {
+			String i = getId();
+			b.linkPort(i);
+			BgShape.names.put(i,new Point2D.Double(0.0,0.0));
+		}
+
+		ws();
+
+		if(peek() == ',') {
+			consume();
+			links(b);
+		}
+
+		return;
 	}
 
 	public LinkedList<BgShape> exp() {
