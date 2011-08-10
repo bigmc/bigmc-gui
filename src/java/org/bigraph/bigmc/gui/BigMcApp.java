@@ -142,7 +142,6 @@ public class BigMcApp extends JFrame {
 			String s = codeEditor.getText();
 			w.write(s);
 			w.close();
-			fileName = fp;
 			setDirty(false);
 		} catch(java.io.IOException e) {
 			JOptionPane.showMessageDialog(this, "Error writing to file: " + fp);
@@ -303,6 +302,10 @@ public class BigMcApp extends JFrame {
 
 	public File getFileName() {
 		return fileName;
+	}
+
+	public void setFileName(File f) {
+		fileName = f;
 	}
 
 	public void visualise(String opt) {

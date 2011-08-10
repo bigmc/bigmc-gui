@@ -119,7 +119,8 @@ public class McEvent {
 			}
 
 			System.out.println("File selected: " + f.getDirectory() + f.getFile());
-			frame.saveFile(new File(f.getDirectory() + f.getFile()));
+			frame.setFileName(new File(f.getDirectory() + f.getFile()));
+			frame.saveFile(frame.getFileName());
 		}
 	}
 
@@ -236,6 +237,23 @@ public class McEvent {
 
 		public void actionPerformed(ActionEvent e) {
 			windowClosing(null);
+		}
+	}
+
+	static public class ExampleEvent extends McHandler implements ActionListener {
+		public ExampleEvent(BigMcApp f) { super(f); }
+
+		public void actionPerformed(ActionEvent e) {
+			if(frame.getDirty()) {
+				if(!frame.confirmDiscard()) return;
+			}
+
+			frame.newDocument();
+
+			File f = new File(BigMcApp.BIGMC_HOME + "/doc/examples/" + ((JMenuItem)e.getSource()).getText());
+
+			frame.loadFile(f);
+
 		}
 	}
 }

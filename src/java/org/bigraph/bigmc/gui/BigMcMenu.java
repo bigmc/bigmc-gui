@@ -30,6 +30,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.InputEvent;
 
+import java.io.File;
+
 import java.net.URL;
 
 import jsyntaxpane.DefaultSyntaxKit;
@@ -42,6 +44,24 @@ public class BigMcMenu extends JMenuBar {
 	public BigMcMenu(BigMcApp win) {
 		window = win;
 		addMenus(this);
+	}
+
+	public void addExamples(JMenu p) {
+		File dir = new File(BigMcApp.BIGMC_HOME + "/doc/examples/");
+	
+		String[] children = dir.list();
+		if (children == null) {
+			return;
+		} else {
+			for (int i=0; i<children.length; i++) {
+				if(children[i].endsWith(".bgm")) {
+					JMenuItem j = new JMenuItem(children[i]);
+					j.addActionListener(new McEvent.ExampleEvent(window));
+					p.add(j);
+				}
+			}
+		}
+		
 	}
 
 	protected void addMenus(JMenuBar menuBar) {
@@ -134,6 +154,10 @@ public class BigMcMenu extends JMenuBar {
 		i = new JMenuItem("BigMC Online Manual"); m.add(i);
 		i.addActionListener(new McEvent.ManualEvent(window));
 		i.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS,mod | InputEvent.SHIFT_DOWN_MASK));
+		
+		m.addSeparator();
+
+		addExamples(m);
 
 	}
 }
